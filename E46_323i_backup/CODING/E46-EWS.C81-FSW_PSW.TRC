@@ -1,0 +1,24 @@
+K_BUS_FREI_OHNE
+	nicht_aktiv
+ZEIT_BIS_AUTOM_SPERREN
+	wert_01
+EWS_3_SCHNITTSTELLE
+	aktiv
+PARK/NEUTRAL_EINGANG
+	nicht_aktiv
+ABSCHALTDREHZAHL_ANLASSER
+	4_zylinder_benziner
+	6_zylinder_benziner
+	8_zylinder_benziner
+	12_zylinder_benziner
+ZEITDAUER_BIS_ABSCHALTUNG
+	benziner
+	diesel
+SCHALT_KRITERIUM_EWS_3
+	4_zylinder_benziner
+	4_zylinder_diesel
+	6_zylinder_benziner
+	6_zylinder_diesel
+	8_zylinder_benziner
+	8_zylinder_diesel
+	12_zylinder_benziner
