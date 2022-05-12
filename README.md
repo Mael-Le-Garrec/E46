@@ -46,6 +46,12 @@ An easy calculation based on RPM is given by:
 
 $$D = \frac{IPW \cdot RPM}{1000} \cdot \frac{1}{60 \cdot 2} \cdot 100$$
 
+When tuning an engine for more fuel without changing injectors (e.g. E85), it is
+useful to know what's the maximum RPM achievable. This is given by:
+
+$$RPM = D \cdot \frac{1000 \cdot 60 \cdot 2}{IPW \cdot 100}$$
+
+
 #### Example 
 
 An engine at 7000 RPM does 117 revolutions per second (7000 / 60).  
@@ -73,3 +79,16 @@ $17.14$ in this case, the duty cycle would be higher than 100%. An injector
 can't be opened longer than all the time, the mixture would then be lean.  
 To fix that, either lower the maximum RPM or get higher injectors (to reduce
 the $IPW$).
+
+Now let's say we're tuning our engine for E85. We need 30% more fuel and we
+want to stay at 80% duty cycle without changing the injectors.  
+The maximum injector pulse width given by the fuel map of my engine is 16.11ms.
+This is at maximum load (throttle open at maximum).  
+Adding 30% more fuel gives us 21ms (16.11 * 1.3).
+
+The safe RPM achievable with this IPW is then:
+
+$$\begin{aligned}
+RPM &= 80 \cdot \frac{1000 \cdot 60 \cdot 2}{21 \cdot 100} \\
+    &= 4570
+\end{aligned}$$
