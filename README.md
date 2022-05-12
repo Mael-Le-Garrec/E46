@@ -3,7 +3,16 @@
 This is the git repository related to my 2000 BMW E46 323i.
 I'm using this repository to keep track of coding and ECU data.
 
-## Information
+# Table of Content
+
+1. [Introduction](#introduction)
+2. [Directories](#directories)
+   1. [Tree](#tree)
+   2. [ECU](#ecu)
+     1. [E85](#e85)
+3. [Maths](#maths)
+
+# Introduction
 
 This E46 comes from Germany and has been made for the French market.
 It thus has the european options by default.
@@ -13,19 +22,73 @@ The version of each module gotten via NCS Expert is written in the file name.
 
 The stock injectors are _Siemens VDO 13537546244_, with a flow rate of 215cc/min (~20.5lb/h).
 
-## Directories
+# Directories
+
+## Tree
 
 * E46_323i_backup
   * `/` contains the 32 and 512kb ROM files from the ECU. Extracted with 
     `Ms4x Flasher`
   * `/CODING` contains the stock module data. Extracted with `NCS Expert`
+* ECU
+  * `/` contains tuned maps
+  * `/E85` maps relative to E85
+* logs
+  * `/RomRaider_logs` contains logs acquired by `RomRaider`
 
+## ECU
 
-## Maths
+This directory contains the tuned maps.
+Currently, only maps for E85 are being developed.
+
+### E85
+
+```
+ECU/E85/
+ - MS42_0110C6_32KB_hatrix_E85_V0.1.bin
+```
+
+Each iteration is a modification upon the previous bin. The first one being
+a difference to the stock bin.
+
+* MS42_0110C6_32KB_hatrix_E85_V0.1.bin
+  * Fuel Maps -> Multiplying by 1.3
+    * Fuel Injection before Cranking: +30%
+    * Cranking Fuel at Cold Engine Start: from +130% to +50%
+    * Full Load Enrichment: +30%
+    * Fuel Injection Base: +30%
+    * Fuel Injection Idle Speed Warm Engine: +30%
+    * Fuel Injection Idle Speed Cold Engine: +30%
+    * Fuel Injection Part Load Bank 1 Warm Engine: +30%
+    * Fuel Injection Part Load Bank 2 Warm Engine: +30%
+  * Limiting the engine RPM -> Max duty cycle of 80%
+    * Engine Speed Soft Limiter (AT & MT): 5000 RPM
+    * Engine Speed Hard Limiter (AT & MT): 5100 RPM
+    * Engine Speed Limiter (VSS Error): 5000 RPM
+  * Full Load Recognition -> Turning off full load by putting max value
+    * Full Load Basic: 120%
+    * Full Load DISA Active: 120%
+    * Full Load VANOS Active: 120%
+  * Lambda Adaptation for flex fuel:
+    * Multiplicative Fuel Learning - Min Limit: -30%
+    * Multiplicative Fuel Learning - Min Limit: 30%
+    * Multiplicative Fuel Learning - Min RPM: 600
+  * MPG Gauge Correction -> divided by 1.3
+* Further -> What to add next?
+  * Multiplicative Fuel Learning - Min Load: ?
+  * Additive Fuel Learning - Max RPM: ?
+  * Idle Speed
+    * Drive Engaged
+    * Without Extra Load
+    * With Drive + AC
+    * With AC
+  * Afterstart Enrichment
+  * Fuel Injection Warmup Enrichment
+# Maths
 
 Here will be listed some useful formulas when tuning an engine.
 
-### Injector Duty Cycle
+## Injector Duty Cycle
 
 A duty cycle is the fraction of one period during which a signal is active.
 The easiest way to understand it: it is the percentage of time the injector is
@@ -52,7 +115,7 @@ useful to know what's the maximum RPM achievable. This is given by:
 $$RPM = D \cdot \frac{1000 \cdot 60 \cdot 2}{IPW \cdot 100}$$
 
 
-#### Example 
+### Example 
 
 An engine at 7000 RPM does 117 revolutions per second (7000 / 60).  
 By inverting, we get the seconds per revolution: 0.0086 (1 / 117), which is
