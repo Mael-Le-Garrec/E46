@@ -51,6 +51,11 @@ ECU/E85/
 Each iteration is a modification upon the previous bin. The first one being
 a difference to the stock bin.
 
+* MS42_0110C6_32KB_hatrix_test_1.bin
+  * Engine Speed Soft Limiter (AT & MT): 4000 RPM
+  * Engine Speed Hard Limiter (AT & MT): 4100 RPM
+  * Throttle Body Speed: 60, instead of 44
+  
 * MS42_0110C6_32KB_hatrix_E85_V0.1.bin
   * Fuel Maps -> Multiplying by 1.3
     * Fuel Injection before Cranking: +30%
