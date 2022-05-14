@@ -9,7 +9,8 @@ I'm using this repository to keep track of coding and ECU data.
 2. [Directories](#directories)
    1. [Tree](#tree)
    2. [ECU](#ecu)
-     1. [E85](#e85)
+      1. [Tests](#tests)
+      1. [E85](#e85)
 3. [Maths](#maths)
 
 # Introduction
@@ -32,6 +33,7 @@ The stock injectors are _Siemens VDO 13537546244_, with a flow rate of 215cc/min
   * `/CODING` contains the stock module data. Extracted with `NCS Expert`
 * ECU
   * `/` contains tuned maps
+  * `/tests` contains maps only used for testing purposes
   * `/E85` maps relative to E85
 * logs
   * `/RomRaider_logs` contains logs acquired by `RomRaider`
@@ -40,6 +42,23 @@ The stock injectors are _Siemens VDO 13537546244_, with a flow rate of 215cc/min
 
 This directory contains the tuned maps.
 Currently, only maps for E85 are being developed.
+
+
+### Tests
+
+```
+ECU/tests/
+ - MS42_0110C6_32KB_hatrix_test_1.bin
+```
+
+This directory contains test bins. They are mostly used to try out some options
+and see if everything, from tuning, flashing to operation, if working properly.
+
+* MS42_0110C6_32KB_hatrix_test_1.bin
+  * Engine Speed Soft Limiter (AT & MT): 4000 RPM
+  * Engine Speed Hard Limiter (AT & MT): 4100 RPM
+  * Throttle Body Speed: 60, instead of 44
+
 
 ### E85
 
@@ -51,11 +70,6 @@ ECU/E85/
 Each iteration is a modification upon the previous bin. The first one being
 a difference to the stock bin.
 
-* MS42_0110C6_32KB_hatrix_test_1.bin
-  * Engine Speed Soft Limiter (AT & MT): 4000 RPM
-  * Engine Speed Hard Limiter (AT & MT): 4100 RPM
-  * Throttle Body Speed: 60, instead of 44
-  
 * MS42_0110C6_32KB_hatrix_E85_V0.1.bin
   * Fuel Maps -> Multiplying by 1.3
     * Fuel Injection before Cranking: +30%
@@ -89,6 +103,9 @@ a difference to the stock bin.
     * With AC
   * Afterstart Enrichment
   * Fuel Injection Warmup Enrichment
+  * Correct Full Load Enrichment to match E85 Max Power Rich AFR
+
+
 # Maths
 
 Here will be listed some useful formulas when tuning an engine.
