@@ -52,7 +52,7 @@ ECU/tests/
 ```
 
 This directory contains test bins. They are mostly used to try out some options
-and see if everything, from tuning, flashing to operation, if working properly.
+and see if everything, from tuning, flashing to operation, is working properly.
 
 * MS42_0110C6_32KB_hatrix_test_1.bin
   * Engine Speed Soft Limiter (AT & MT): 4000 RPM
