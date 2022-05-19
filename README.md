@@ -93,6 +93,7 @@ a difference to the stock bin.
     * Multiplicative Fuel Learning - Min Limit: 30%
     * Multiplicative Fuel Learning - Min RPM: 600
   * MPG Gauge Correction -> divided by 1.3
+  * After Start Enrichment -> from 65% to 10%
 * Further -> What to add next?
   * Multiplicative Fuel Learning - Min Load: ?
   * Additive Fuel Learning - Max RPM: ?
@@ -101,7 +102,6 @@ a difference to the stock bin.
     * Without Extra Load
     * With Drive + AC
     * With AC
-  * Afterstart Enrichment
   * Fuel Injection Warmup Enrichment
   * Correct Full Load Enrichment to match E85 Max Power Rich AFR
 
