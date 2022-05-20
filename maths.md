@@ -21,7 +21,10 @@ magnitude, usually here milliseconds ($ms$) are used.
 
 An easy calculation based on RPM is given by:
 
-$$D = \frac{IPW \cdot RPM}{1000} \cdot \frac{1}{60 \cdot 2} \cdot 100$$
+$$\begin{aligned}
+D &= \frac{IPW \cdot RPM}{1000} \cdot \frac{1}{60 \cdot 2} \cdot 100
+  &= \frac{IPW \cdot RPM}{1200}
+\end{aligned}$$
 
 When tuning an engine for more fuel without changing injectors (e.g. E85), it is
 useful to know what's the maximum RPM achievable. This is given by:
