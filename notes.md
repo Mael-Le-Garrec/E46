@@ -33,3 +33,30 @@ system is indeed _drive by wire_. Look for `MDK`, page 51.
 
 In summary, this map achieved what I wanted to do, full success!
 After the test I reverted the car back to its original map.
+
+### MS42_0110C6_32KB_hatrix_E85_V0.1.bin
+
+This is my first E85 map! I only put 20 liters in the tank, on top of maybe 5
+liters of E10, to be able to blend with E10 if something didn't work.
+
+But turns out it does work! The engine cranks and starts smoothly. It must help
+that the car was already warm when I did that.
+
+I took a log of about 10 minutes with various loads. This log will not be used
+to retune the map, but just to check some data.
+
+The engine _does_ cut off at 5000 RPM, as intended, where the IPW is 9. This
+seems low, it must be because of the remaining E10 in the tank. The load was
+400mg/stroke, the IPW should then be ~11. In stock E10 map, the IPW would have
+been around 9.16.
+This is weird, as the IPW should be higher than that, even on stock map.
+
+The max reached IPW is ~14.5 at 450 mg/stroke. This _does_ check out with the
+map I made. There are probably some corrections being made.
+
+The engine does crank correctly at cold start, the outside weather being +20°C
+anyway.d
+
+The MPG Gauge is wrong, I'm using the same amount of fuel as before. I think
+the ECU knows my injectors flow rate and knows how to calculate the appropriate
+MPG. I probably shouldn't have divided that value, I will revert it.
