@@ -70,39 +70,51 @@ ECU/E85/
 Each iteration is a modification upon the previous bin. The first one being
 a difference to the stock bin.
 
-* MS42_0110C6_32KB_hatrix_E85_V0.1.bin
-  * Fuel Maps -> Multiplying by 1.3
-    * Fuel Injection before Cranking: +30%
-    * Cranking Fuel at Cold Engine Start: from +130% to +50%
-    * Full Load Enrichment: +30%
-    * Fuel Injection Base: +30%
-    * Fuel Injection Idle Speed Warm Engine: +30%
-    * Fuel Injection Idle Speed Cold Engine: +30%
-    * Fuel Injection Part Load Bank 1 Warm Engine: +30%
-    * Fuel Injection Part Load Bank 2 Warm Engine: +30%
-  * Limiting the engine RPM -> Max duty cycle of 80%
-    * Engine Speed Soft Limiter (AT & MT): 5000 RPM
-    * Engine Speed Hard Limiter (AT & MT): 5100 RPM
-    * Engine Speed Limiter (VSS Error): 5000 RPM
-  * Full Load Recognition -> Turning off full load by putting max value
-    * Full Load Basic: 120%
-    * Full Load DISA Active: 120%
-    * Full Load VANOS Active: 120%
-  * Lambda Adaptation for flex fuel:
-    * Multiplicative Fuel Learning - Min Limit: -30%
-    * Multiplicative Fuel Learning - Min Limit: 30%
-    * Multiplicative Fuel Learning - Min RPM: 600
-  * MPG Gauge Correction -> divided by 1.3
-  * After Start Enrichment -> from 65% to 10%
-* Further -> What to add next?
-  * Multiplicative Fuel Learning - Min Load: ?
-  * Additive Fuel Learning - Max RPM: ?
-  * Idle Speed
-    * Drive Engaged
-    * Without Extra Load
-    * With Drive + AC
-    * With AC
-  * Fuel Injection Warmup Enrichment
-  * Correct Full Load Enrichment to match E85 Max Power Rich AFR
+#### MS42_0110C6_32KB_hatrix_E85_V0.1.bin
+
+This is the first map for my E85 tune. The engine should start and run without
+too much trouble.
+
+* Fuel Maps -> Multiplying by 1.3
+  * Fuel Injection before Cranking: +30%
+  * Cranking Fuel at Cold Engine Start: values ranging from +130% to +50%
+  * Full Load Enrichment: +30%
+  * Fuel Injection Base: +30%
+  * Fuel Injection Idle Speed Warm Engine: +30%
+  * Fuel Injection Idle Speed Cold Engine: +30%
+  * Fuel Injection Part Load Bank 1 Warm Engine: +30%
+  * Fuel Injection Part Load Bank 2 Warm Engine: +30%
+* Limiting the engine RPM -> Max duty cycle of 80%
+  * Engine Speed Soft Limiter (AT & MT): 5000 RPM
+  * Engine Speed Hard Limiter (AT & MT): 5100 RPM
+  * Engine Speed Limiter (VSS Error): 5000 RPM
+* Full Load Recognition -> Turning off full load by putting max value
+  * Full Load Basic: 120%
+  * Full Load DISA Active: 120%
+  * Full Load VANOS Active: 120%
+* Lambda Adaptation for flex fuel:
+  * Multiplicative Fuel Learning - Min Limit: -30%
+  * Multiplicative Fuel Learning - Min Limit: 30%
+  * Multiplicative Fuel Learning - Min RPM: 600
+* MPG Gauge Correction -> divided by 1.3
+* After Start Enrichment -> values ranging from 65% to 10%
 
 
+#### MS42_0110C6_32KB_hatrix_E85_V0.2.bin
+
+* MPG Gauge Correction -> Reverted to original values
+
+
+#### Improvements
+
+Below are listed improvements that could be made on that map.
+
+* Multiplicative Fuel Learning - Min Load: ?
+* Additive Fuel Learning - Max RPM: ?
+* Idle Speed
+  * Drive Engaged
+  * Without Extra Load
+  * With Drive + AC
+  * With AC
+* Fuel Injection Warmup Enrichment
+* Correct Full Load Enrichment to match E85 Max Power Rich AFR
