@@ -65,6 +65,7 @@ and see if everything, from tuning, flashing to operation, is working properly.
 ```
 ECU/E85/
  - MS42_0110C6_32KB_hatrix_E85_V0.1.bin
+ - MS42_0110C6_32KB_hatrix_E85_V0.2.bin
 ```
 
 Each iteration is a modification upon the previous bin. The first one being
