@@ -55,8 +55,30 @@ The max reached IPW is ~14.5 at 450 mg/stroke. This _does_ check out with the
 map I made. There are probably some corrections being made.
 
 The engine does crank correctly at cold start, the outside weather being +20°C
-anyway.d
+anyway.
 
 The MPG Gauge is wrong, I'm using the same amount of fuel as before. I think
 the ECU knows my injectors flow rate and knows how to calculate the appropriate
 MPG. I probably shouldn't have divided that value, I will revert it.
+
+
+### MS42_0110C6_32KB_hatrix_E85_V0.2.bin
+
+This map only reverts the `MPG Fuel Gauge` table back to the original one.
+The displayed fuel consumption seems to be ok now!
+
+I though have some issues now: 
+  * the car lacks some power
+  * lambda values are higher (3% instead of 0.6%).
+  * `68 - EVAP system, purge control valve circuit` DTC, probably related to
+    the fuel cap being hard to close and open
+
+After reverting to the first map I didn't notice any change in power. This map
+isn't the problem.
+
+I don't know if the code I got from the DME is related to the lack of power,
+but I saw that it resets the lambda adaptations to 0 when it is created.
+
+I couldn't test the fuel rail pressure, but I think my problem could come from
+the fuel pump or the fuel filter. I ordered a fuel pump and we'll see if it's
+better or not.
