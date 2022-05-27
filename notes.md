@@ -62,6 +62,13 @@ the ECU knows my injectors flow rate and knows how to calculate the appropriate
 MPG. I probably shouldn't have divided that value, I will revert it.
 
 
+----
+
+After a drive of 1h30, the map seems actually good! The LTFT stay below 1% for
+quite a long time and go to 2.5% at the end, probably because the load I was
+using driving in the mountains wasn't too optimized.
+
+
 ### MS42_0110C6_32KB_hatrix_E85_V0.2.bin
 
 This map only reverts the `MPG Fuel Gauge` table back to the original one.
@@ -82,3 +89,22 @@ but I saw that it resets the lambda adaptations to 0 when it is created.
 I couldn't test the fuel rail pressure, but I think my problem could come from
 the fuel pump or the fuel filter. I ordered a fuel pump and we'll see if it's
 better or not.
+
+
+### MS42_0110C6_32KB_hatrix_E85_V0.3.bin
+
+This map adds the Alpha/n map corrected for E85, I had forgotten it…
+The MPG counter is correct, a bit less than 11L/100km for now.
+The issue I felt with the v0.2 version was the fuel pump, everything seems OK
+now!
+
+
+### MS42_0110C6_32KB_hatrix_E85_V0.4.bin
+
+I tested this map for a really short time. It has been made using the previous
+1h30 log to infer a curve fore the load/IPW.
+The values seemed a bit too rich (40% in some areas) but I decided to go with
+it anyway.
+Result: LTFT around -2.5. I decided to stop the test given that my assumptions
+seemed to be true!
+I will try a different fit or maybe I'll stick with the v0.3 for now.
