@@ -66,6 +66,8 @@ and see if everything, from tuning, flashing to operation, is working properly.
 ECU/E85/
  - MS42_0110C6_32KB_hatrix_E85_V0.1.bin
  - MS42_0110C6_32KB_hatrix_E85_V0.2.bin
+ - MS42_0110C6_32KB_hatrix_E85_V0.3.bin
+ - MS42_0110C6_32KB_hatrix_E85_V0.4.bin
 ```
 
 Each iteration is a modification upon the previous bin. The first one being
@@ -106,10 +108,27 @@ too much trouble.
 * MPG Gauge Correction -> Reverted to original values
 
 
+#### MS42_0110C6_32KB_hatrix_E85_V0.3.bin
+
+* Alpha/n Injection Table -> +30%
+
+
+#### MS42_0110C6_32KB_hatrix_E85_V0.4.bin
+
+Applied the function `0.0325611168538154 x +  -0.14561668444972975` with `x`
+being the load, on the following maps:
+
+* Fuel Injection Base
+* Fuel Injection Part Load Bank 1 Warm Engine
+* Fuel Injection Part Load Bank 2 Warm Engine
+
+
+
 #### Improvements
 
 Below are listed improvements that could be made on that map.
 
+* Activate Full Load
 * Multiplicative Fuel Learning - Min Load: ?
 * Additive Fuel Learning - Max RPM: ?
 * Idle Speed
