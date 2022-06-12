@@ -123,6 +123,14 @@ being the load, on the following maps:
 * Fuel Injection Part Load Bank 2 Warm Engine
 
 
+#### MS42_0110C6_32KB_hatrix_E85_V0.5.bin
+
+This map is based on the V0.3 version.
+
+* Changed the LTFT (Multiplicative Fuel Learning) limit values:
+  * Minimum Limit: -35%, to account for a possible change for regular gas
+  * Maximum Limit: +10%, to trigger a fault if too much gas is needed
+
 
 #### Improvements
 
