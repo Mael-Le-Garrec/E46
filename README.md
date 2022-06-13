@@ -132,11 +132,19 @@ This map is based on the V0.3 version.
   * Maximum Limit: +10%, to trigger a fault if too much gas is needed
 
 
+#### MS42_0110C6_32KB_hatrix_E85_V0.6.bin
+
+* Activating Full Load Enrichment
+  * Full Load DISA Active: reverted to original
+  * Full Load VANOS Active: reverted to original
+  * Full Load Basic: reverted to original
+* Full Load Enrichment: +35% compared to base map
+
+
 #### Improvements
 
 Below are listed improvements that could be made on that map.
 
-* Activate Full Load
 * Multiplicative Fuel Learning - Min Load: ?
 * Additive Fuel Learning - Max RPM: ?
 * Idle Speed
