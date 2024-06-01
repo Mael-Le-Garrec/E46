@@ -108,3 +108,13 @@ it anyway.
 Result: LTFT around -2.5. I decided to stop the test given that my assumptions
 seemed to be true!
 I will try a different fit or maybe I'll stick with the v0.3 for now.
+
+
+### MS42_0110C6_32KB_hatrix_E85_V0.6.bin
+
+Note on 2024-06-01, I've been using this map for two years now and it runs
+great! It definitely is flex fuel as well, I've managed to use E5 without any
+issue.
+Cold start in the winter is just fine. Sometimes requires to crank twice but
+quite rare.
+
