@@ -141,6 +141,15 @@ This map is based on the V0.3 version.
 * Full Load Enrichment: +35% compared to base map
 
 
+#### MS42_0110C6_32KB_hatrix_E85_V0.7.bin
+
+* Changed the rev limiter. Even though the IPW can have a too-high duty cycle
+at those RPMs, it is very unlikely the incoming air is enough to reach them.
+  * Changed soft limiter from 4992 to 6784 RPM
+  * Changed hard limiter from 5088 to 7008 RPM
+  * Changed Speed Sensor (VSS) Error limiter from 4992 RPM to 6496 RPM
+
+
 #### Improvements
 
 Below are listed improvements that could be made on that map.
