@@ -11,6 +11,7 @@ I'm using this repository to keep track of coding and ECU data.
    2. [ECU](#ecu)
       1. [Tests](#tests)
       1. [E85](#e85)
+   3. [Flashing](#flashing)
 3. [Maths](#maths)
 
 # Introduction
@@ -150,16 +151,46 @@ at those RPMs, it is very unlikely the incoming air is enough to reach them.
   * Changed Speed Sensor (VSS) Error limiter from 4992 RPM to 6496 RPM
 
 
+#### MS42_0110C6_32KB_hatrix_E85_V0.8.bin
+
+Based on V0.7. Only E85 fuelling differs from stock now.
+
+* Rev limiters back to stock values. V0.7 went *above* stock (7008 RPM hard)
+  for no power gain, with injector duty near 100% at full load up there.
+  * Soft limiter: 6496 RPM (MT: 6592 below 24 km/h)
+  * Hard limiter: 6592 RPM
+  * VSS Error limiter: 6560 RPM
+* Full Load Enrichment reverted to stock. It is a factor applied on top of the
+  base map, which is already x1.3 for E85, so the stock +10% already gives
+  the same full load lambda (~0.91) as stock on petrol. V0.6's 0.10 -> 0.135
+  only added ~3% fuel while eating injector headroom.
+
+
+#### MS42_0110C6_32KB_hatrix_E85_V0.9.bin
+
+Based on V0.8. Targets the occasional double crank around 10°C on E85.
+
+* Afterstart Enrichment smoothed. It is an absolute pulse width (ms) added on
+  top of the x1.3 base, so anything below x1.3 is *leaner* than stock after
+  start. V0.1 dropped from x1.65 at 0°C straight to x1.2 at 10-25°C.
+  * Factor vs stock per coolant temp: -20 to 0°C: 1.65 (unchanged),
+    10°C: 1.55, 25°C: 1.45, 40°C: 1.35, 60°C and above: 1.3
+
+
 #### Improvements
 
-Below are listed improvements that could be made on that map.
+* Fuel Injection Warmup Enrichment: only if V0.9 doesn't fix the 10°C stall.
+  Raise *Warmup Enrichment (ECT Compensation)* around 10°C.
+* Full Load Enrichment: stock gives lambda ~0.91, E85 best power is
+  ~0.85-0.92. Only go richer (~0.88) if a full load log to 6500 RPM shows
+  injector duty margin.
 
-* Multiplicative Fuel Learning - Min Load: ?
-* Additive Fuel Learning - Max RPM: ?
-* Idle Speed
-  * Drive Engaged
-  * Without Extra Load
-  * With Drive + AC
-  * With AC
-* Fuel Injection Warmup Enrichment
-* Correct Full Load Enrichment to match E85 Max Power Rich AFR
+
+## Flashing
+
+TODO: flash from this Linux laptop (only done from a Windows XP tablet so far).
+
+* [MS4x Flasher](https://www.ms4x.net/index.php?title=MS4x_Flasher) has a
+  native Linux `.deb`. On Arch: extract it to `/`, join the `uucp` group.
+* The licence hardware ID is read from the ECU: car connected, ignition on.
+* The bins are the 32KB calibration, at offset `0x48000` of the 512KB backup.
