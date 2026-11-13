@@ -4,7 +4,7 @@ import json
 import pandas as pd
 import plotly.io as pio
 
-from tools import (bins_overview, changed_tables, extract_map, fuel_trim_table, list_bins, list_logs,
+from tools import (PARENTS, bins_overview, changed_tables, extract_map, fuel_trim_table, list_bins, list_logs,
                    load_log, log_browser, map_browser, to_romraider)
 
 pio.renderers.default = "json"  # no browser
@@ -17,7 +17,7 @@ assert changed_tables(D, bins["E85_V0.8"], bins["E85_V0.9"]) == ["Afterstart Enr
 v7 = changed_tables(D, bins["stock"], bins["E85_V0.7"])
 assert len(v7) == 18 and "Full Load Enrichment" in v7, v7
 assert "Full Load Enrichment" not in changed_tables(D, bins["stock"], bins["E85_V0.8"])
-ov = bins_overview(D, bins, parents={"E85_V0.5": "E85_V0.3", "test_1": "stock"})
+ov = bins_overview(D, bins, PARENTS)
 assert ov.loc["E85_V0.5", "parent"] == "E85_V0.3" and ov.loc["test_1", "parent"] == "stock", ov["parent"]
 assert ov.loc["E85_V0.9", "changed vs parent"] == "Afterstart Enrichment"
 assert ov.loc["E85_V0.8", "parent"] == "E85_V0.7"

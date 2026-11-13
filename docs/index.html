@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E46 E85 Logbook</title>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<style>
+  :root {
+    --bg: #f7f6f3; --card: #ffffff; --fg: #1d1b18; --muted: #6f6a62; --line: #e3e0da; --accent: #1f5fbf;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131312; --card: #1c1b1a; --fg: #e8e5df; --muted: #9b968d; --line: #2f2d2a; --accent: #7aa7ec;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #131312; --card: #1c1b1a; --fg: #e8e5df; --muted: #9b968d; --line: #2f2d2a; --accent: #7aa7ec;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1240px; margin: 0 auto; padding: 28px 16px 80px; }
+  h1 { font-size: 1.7rem; margin: 0; letter-spacing: -0.01em; }
+  h2 { font-size: 1.25rem; margin: 48px 0 4px; padding-top: 12px; border-top: 1px solid var(--line); }
+  h3 { font-size: 1.05rem; margin: 20px 0 8px; }
+  h4 { font-size: 0.85rem; margin: 16px 0 6px; color: var(--muted); font-weight: 600; }
+  p { margin: 4px 0 12px; }
+  .muted { color: var(--muted); }
+  code { font-size: 0.9em; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 14px 0; }
+  label { display: inline-flex; gap: 6px; align-items: center; max-width: 100%; min-width: 0; }
+  label select { min-width: 0; }
+  select { font: inherit; padding: 5px 8px; max-width: 100%; color: var(--fg); background: var(--card);
+           border: 1px solid var(--line); border-radius: 6px; }
+  #table { max-width: min(520px, 100%); }
+  input[type="checkbox"] { accent-color: var(--accent); }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 13px; }
+  th, td { padding: 4px 9px; text-align: right; white-space: nowrap; }
+  th { font-weight: 600; }
+  #overview th, #overview td { border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  #overview td.num { text-align: right; }
+  #overview td.list { white-space: normal; min-width: min(320px, 55vw); color: var(--muted); }
+  #overview tr[data-bin] { cursor: pointer; }
+  #overview tr[data-bin]:hover { background: var(--card); }
+  table.grid td { border: 1px solid var(--bg); }
+  table.grid th { color: var(--muted); font-weight: 500; }
+  table.grid th.corner { text-align: left; font-size: 11px; }
+  .value { font-size: 1.4rem; font-variant-numeric: tabular-nums; margin: 4px 0; }
+  .plots { display: grid; gap: 12px; margin-top: 16px; }
+  @media (min-width: 1000px) { .plots.two { grid-template-columns: 1.15fr 1fr; } }
+  .plot { width: 100%; min-width: 0; }
+  .checks { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 8px 0 4px; font-size: 14px; }
+  details summary { cursor: pointer; color: var(--muted); }
+  .error { color: #c0392b; }
+</style>
+</head>
+<body>
+<main>
+  <h1>E46 323i E85 logbook</h1>
+  <p class="muted">MS42 <code>0110C6</code> calibrations and RomRaider logs. Data built by
+    <code>python -m tools.build_site</code>.</p>
+
+  <section id="bins">
+    <h2>Bins</h2>
+    <p class="muted">Every 32KB calibration, the bin it was built from and what changed from it.
+      Click a row to compare it with its parent.</p>
+    <div class="scroll"><table id="overview"></table></div>
+  </section>
+
+  <section id="maps">
+    <h2>Maps</h2>
+    <p class="muted">Bin B is drawn in red over bin A, and the heatmap shows B vs A in %.</p>
+    <div class="controls">
+      <label>Bin A <select id="binA"></select></label>
+      <label>Bin B <select id="binB"></select></label>
+      <label><input type="checkbox" id="onlyChanged"> Only tables changed (A vs B, or A vs stock)</label>
+    </div>
+    <div class="controls"><label>Table <select id="table"></select></label></div>
+    <h3 id="mapTitle"></h3>
+    <div id="mapTables"></div>
+    <div id="plots" class="plots"><div id="plot3d" class="plot"></div><div id="plotDiff" class="plot"></div></div>
+  </section>
+
+  <section id="logs">
+    <h2>Logs</h2>
+    <p class="muted">Added channels: <code>Injector Duty (%)</code> = IPW × RPM / 1200, and
+      <code>Fuel Correction (%)</code> = (1 + STFT)(1 + LTFT) − 1. Drag to zoom, double-click to reset.</p>
+    <div class="controls"><label>Log <select id="log"></select></label> <span id="logInfo" class="muted"></span></div>
+    <details open><summary>Channels vs time</summary><div id="channels" class="checks"></div></details>
+    <div id="plotTime" class="plot"></div>
+    <h3>Scatter</h3>
+    <div class="controls">
+      <label>X <select id="sx"></select></label>
+      <label>Y <select id="sy"></select></label>
+      <label>Color <select id="sc"></select></label>
+    </div>
+    <div id="plotScatter" class="plot"></div>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const NONE = "(none)";
+const CONFIG = {responsive: true, displaylogo: false};
+const DEFAULT_TABLE = "Fuel Injection part load bank 1 warm engine";
+const DEFAULT_CHANNELS = ["Engine Speed (RPM)", "Engine Load (mg/stroke)", "Fuel Injector Pulse Width (ms)",
+                          "Fuel Correction - Bank 1 (%)", "Coolant Temperature (°C)"];
+const DEFAULT_XYC = ["Engine Load (mg/stroke)", "Fuel Injector Pulse Width (ms)", "Engine Speed (RPM)"];
+let M, currentLog = null;
+const logCache = new Map();
+
+function fillSelect(sel, options, value) {
+  sel.innerHTML = options.map(o => `<option>${esc(o)}</option>`).join("");
+  if (options.includes(value)) sel.value = value;
+}
+
+function theme(extra) {
+  return Object.assign({
+    paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
+    font: {color: cssVar("--fg"), family: "system-ui, sans-serif", size: 12},
+    margin: {l: 60, r: 10, t: 30, b: 45},
+  }, extra);
+}
+const axis = (title, extra) => Object.assign(
+  {title: {text: title, font: {size: 11}}, gridcolor: cssVar("--line"), zerolinecolor: cssVar("--line")}, extra);
+
+// ------------------------------------------------------------------ bins
+
+function renderOverview() {
+  $("overview").innerHTML =
+    "<tr><th>Bin</th><th>Parent</th><th>Tables vs stock</th><th>Changed vs parent</th></tr>" +
+    M.overview.map(r => `<tr${r.parent ? ` data-bin="${esc(r.bin)}" data-parent="${esc(r.parent)}"` : ""}>
+      <th>${esc(r.bin)}</th><td>${esc(r.parent)}</td><td class="num">${r.vs_stock}</td>
+      <td class="list">${r.changed.map(esc).join(", ")}</td></tr>`).join("");
+}
+
+// ------------------------------------------------------------------ maps
+
+const tableNames = () => Object.keys(M.tables).sort((a, b) => a.localeCompare(b));
+const versionIndex = (t, bin) => t.bins[M.bins.indexOf(bin)];
+const version = (t, bin) => t.versions[versionIndex(t, bin)];
+
+const VIRIDIS = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
+function viridis(t) {
+  t = Math.min(1, Math.max(0, t));
+  const i = Math.min(3, Math.floor(t * 4)), f = t * 4 - i, a = VIRIDIS[i], b = VIRIDIS[i + 1];
+  const c = a.map((v, k) => Math.round(v + (b[k] - v) * f));
+  return {bg: `rgb(${c})`, fg: 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2] > 140 ? "#000" : "#fff"};
+}
+const fmtCell = v => v == null ? "" : Number.isInteger(v) ? String(v) : v.toFixed(3);
+const fmtAxis = v => v == null ? "" : String(+v.toFixed(2));
+
+function gridHTML(t, v) {
+  if (v.z.length === 1 && v.z[0].length === 1) return `<p class="value">${fmtCell(v.z[0][0])}</p>`;
+  const flat = v.z.flat().filter(c => c != null), lo = Math.min(...flat), hi = Math.max(...flat);
+  const cell = c => {
+    const col = viridis(hi > lo ? (c - lo) / (hi - lo) : 0.5);
+    return `<td style="background:${col.bg};color:${col.fg}">${fmtCell(c)}</td>`;
+  };
+  return `<div class="scroll"><table class="grid"><tr><th class="corner">${esc(t.yname)} ↓ ${esc(t.xname)} →</th>` +
+    v.x.map(x => `<th>${fmtAxis(x)}</th>`).join("") + "</tr>" +
+    v.z.map((row, i) => `<tr><th>${fmtAxis(v.y[i])}</th>${row.map(cell).join("")}</tr>`).join("") +
+    "</table></div>";
+}
+
+function refreshTables() {
+  const a = $("binA").value, b = $("binB").value;
+  const ref = b !== NONE ? b : "stock";
+  const names = tableNames().filter(n =>
+    !$("onlyChanged").checked || versionIndex(M.tables[n], a) !== versionIndex(M.tables[n], ref));
+  fillSelect($("table"), names, $("table").value);
+  renderMap();
+}
+
+function renderMap() {
+  const name = $("table").value, a = $("binA").value, b = $("binB").value;
+  if (!name) {
+    $("mapTitle").textContent = "No table differs.";
+    $("mapTables").innerHTML = "";
+    plotMap(null);
+    return;
+  }
+  const t = M.tables[name], va = version(t, a), vb = b === NONE ? null : version(t, b);
+  $("mapTitle").textContent = name + (t.units ? ` [${t.units}]` : "");
+  $("mapTables").innerHTML = [[a, va], ...(vb ? [[b, vb]] : [])]
+    .map(([n, v]) => `<h4>${esc(n)}</h4>${gridHTML(t, v)}`).join("");
+  plotMap(t, va, vb, a, b);
+}
+
+function plotMap(t, va, vb, na, nb) {
+  const p3 = $("plot3d"), pd = $("plotDiff");
+  const rows = va ? va.z.length : 0, cols = va ? va.z[0].length : 0;
+  const twoD = rows > 1 && cols > 1;
+  p3.hidden = !t || rows * cols === 1;
+  pd.hidden = !(twoD && vb);
+  $("plots").classList.toggle("two", !pd.hidden);
+  if (p3.hidden) Plotly.purge(p3);
+  if (pd.hidden) Plotly.purge(pd);
+  if (p3.hidden) return;
+
+  if (!twoD) {  // 1D table: line plot
+    const series = v => rows === 1 ? {x: v.x, y: v.z[0]} : {x: v.y, y: v.z.map(r => r[0])};
+    const traces = [[na, va], ...(vb ? [[nb, vb]] : [])]
+      .map(([n, v]) => Object.assign(series(v), {name: n, type: "scatter", mode: "lines+markers"}));
+    Plotly.react(p3, traces, theme({height: 420, legend: {orientation: "h"},
+      xaxis: axis(rows === 1 ? t.xname : t.yname), yaxis: axis(t.units)}), CONFIG);
+    return;
+  }
+
+  const traces = [{type: "surface", x: va.x, y: va.y, z: va.z, name: na, colorscale: "Viridis", showscale: false}];
+  if (vb) traces.push({type: "surface", x: vb.x, y: vb.y, z: vb.z, name: nb, colorscale: "Reds",
+                       opacity: 0.6, showscale: false});
+  Plotly.react(p3, traces, theme({
+    height: 560, margin: {l: 0, r: 0, t: 30, b: 0},
+    title: {text: vb ? `${na} (colour), ${nb} (red)` : na, font: {size: 13}},
+    scene: {xaxis: axis(t.xname), yaxis: axis(t.yname), zaxis: axis(t.units)},
+  }), CONFIG);
+
+  if (vb) {
+    const pct = va.z.map((row, i) => row.map((a, j) =>
+      a && vb.z[i][j] != null ? (vb.z[i][j] / a - 1) * 100 : null));
+    const lim = Math.max(1, ...pct.flat().filter(v => v != null).map(Math.abs));
+    Plotly.react(pd, [{
+      type: "heatmap", x: va.x.map(fmtAxis), y: va.y.map(fmtAxis), z: pct, zmin: -lim, zmax: lim,
+      colorscale: "RdBu", texttemplate: "%{z:.1f}", colorbar: {title: {text: "%"}},
+      hovertemplate: `${esc(t.yname)} %{y}<br>${esc(t.xname)} %{x}<br>%{z:.1f} %<extra></extra>`,
+    }], theme({
+      height: 560, title: {text: `${nb} vs ${na} (%)`, font: {size: 13}},
+      xaxis: axis(t.xname, {type: "category"}), yaxis: axis(t.yname, {type: "category", autorange: "reversed"}),
+    }), CONFIG);
+  }
+}
+
+// ------------------------------------------------------------------ logs
+
+function getLog(file) {
+  if (!logCache.has(file)) {
+    logCache.set(file, fetch("data/logs/" + encodeURIComponent(file)).then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    }));
+  }
+  return logCache.get(file);
+}
+
+async function loadLog() {
+  const entry = M.logs.find(l => l.name === $("log").value);
+  $("logInfo").textContent = "loading…";
+  try {
+    currentLog = await getLog(entry.file);
+  } catch (e) {
+    logCache.delete(entry.file);
+    $("logInfo").textContent = `couldn't load: ${e.message}`;
+    return;
+  }
+  const cols = currentLog.columns.filter(c => c !== "Time (s)");
+  const checked = [...document.querySelectorAll("#channels input:checked")].map(i => i.value);
+  const want = new Set(checked.length ? checked : DEFAULT_CHANNELS);
+  $("channels").innerHTML = cols.map(c =>
+    `<label><input type="checkbox" value="${esc(c)}"${want.has(c) ? " checked" : ""}> ${esc(c)}</label>`).join("");
+  ["sx", "sy", "sc"].forEach((id, k) => {
+    const cur = $(id).value;
+    fillSelect($(id), cols, cols.includes(cur) ? cur : DEFAULT_XYC[k]);
+  });
+  $("logInfo").textContent = `${entry.rows} rows, ${Math.round(entry.seconds / 60)} min`;
+  plotTime();
+  plotScatter();
+}
+
+function plotTime() {
+  const el = $("plotTime");
+  const channels = [...document.querySelectorAll("#channels input:checked")].map(i => i.value);
+  if (!currentLog || !channels.length) { Plotly.purge(el); return; }
+  const n = channels.length, time = currentLog.data["Time (s)"];
+  const traces = channels.map((c, i) => ({
+    type: "scattergl", mode: "lines", x: time, y: currentLog.data[c], name: c,
+    xaxis: "x", yaxis: i ? `y${i + 1}` : "y", line: {width: 1.2},
+  }));
+  const layout = theme({
+    height: 140 * n + 70, showlegend: false, hovermode: "x",
+    grid: {rows: n, columns: 1, pattern: "coupled", ygap: 0.18}, margin: {l: 80, r: 10, t: 10, b: 45},
+    xaxis: axis("Time (s)"),
+  });
+  channels.forEach((c, i) => { layout[i ? `yaxis${i + 1}` : "yaxis"] = axis(c.replace(" (", "<br>(")); });
+  Plotly.react(el, traces, layout, CONFIG);
+}
+
+function plotScatter() {
+  if (!currentLog) return;
+  const x = $("sx").value, y = $("sy").value, c = $("sc").value, d = currentLog.data;
+  Plotly.react($("plotScatter"), [{
+    type: "scattergl", mode: "markers", x: d[x], y: d[y], customdata: d["Time (s)"],
+    marker: {color: d[c], colorscale: "Viridis", size: 4, showscale: true,
+             colorbar: {title: {text: c.replace(" (", "<br>("), font: {size: 11}}}},
+    hovertemplate: `t = %{customdata} s<br>${esc(x)} = %{x}<br>${esc(y)} = %{y}<extra></extra>`,
+  }], theme({height: 520, xaxis: axis(x), yaxis: axis(y)}), CONFIG);
+}
+
+// ------------------------------------------------------------------ init
+
+(async () => {
+  try {
+    const r = await fetch("data/maps.json");
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    M = await r.json();
+  } catch (e) {
+    document.querySelector("main").insertAdjacentHTML("beforeend",
+      `<p class="error">Couldn't load data/maps.json (${esc(e.message)}). Opened from disk? Serve it instead:
+       <code>python -m http.server -d docs</code></p>`);
+    return;
+  }
+
+  renderOverview();
+  $("overview").addEventListener("click", e => {
+    const tr = e.target.closest("tr[data-bin]");
+    if (!tr) return;
+    $("binA").value = tr.dataset.bin;
+    $("binB").value = tr.dataset.parent;
+    $("onlyChanged").checked = true;
+    refreshTables();
+    $("maps").scrollIntoView({behavior: "smooth"});
+  });
+
+  const latest = M.bins.filter(b => b.startsWith("E85")).at(-1) || M.bins[0];
+  fillSelect($("binA"), M.bins, latest);
+  fillSelect($("binB"), [NONE, ...M.bins], "stock");
+  fillSelect($("table"), tableNames(), DEFAULT_TABLE);
+  ["binA", "binB", "onlyChanged"].forEach(id => $(id).addEventListener("change", refreshTables));
+  $("table").addEventListener("change", renderMap);
+  refreshTables();
+
+  fillSelect($("log"), M.logs.map(l => l.name), "2022-05-26/romraiderlog_20220526_102629.csv");
+  $("log").addEventListener("change", loadLog);
+  $("channels").addEventListener("change", plotTime);
+  ["sx", "sy", "sc"].forEach(id => $(id).addEventListener("change", plotScatter));
+  loadLog();
+
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { renderMap(); plotTime(); plotScatter(); });
+})();
+</script>
+</body>
+</html>

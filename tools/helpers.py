@@ -320,6 +320,10 @@ def changed_tables(definition_path, bin_a, bin_b):
     return sorted(n for n, spans in ranges.items() if any(((diff >= s) & (diff < e)).any() for s, e in spans))
 
 
+PARENTS = {"E85_V0.5": "E85_V0.3",  # V0.4 was a dead end
+           "test_1": "stock"}     # any other bin's parent is the previous bin
+
+
 def bins_overview(definition_path, bins, parents=None, reference="stock"):
     """Each bin's parent (the previous bin, unless set in `parents`), the tables changed vs
     that parent, and the count of tables changed vs stock."""
@@ -411,8 +415,12 @@ def map_browser(definition_path, bins, a="stock", b=None, table=None):
         if w_t.value is None:
             _show(out, Markdown("No table differs."))
             return
-        da = extract_map(bins[w_a.value], definition_path, w_t.value)
-        db = None if w_b.value == none else extract_map(bins[w_b.value], definition_path, w_t.value)
+        try:
+            da = extract_map(bins[w_a.value], definition_path, w_t.value)
+            db = None if w_b.value == none else extract_map(bins[w_b.value], definition_path, w_t.value)
+        except ValueError as e:  # switches and tables outside the 32KB calibration
+            _show(out, Markdown(f"Can't read *{w_t.value}* from these bins: {e}"))
+            return
         objects = [Markdown(f"### {w_t.value} [{da.attrs['units']}]")]
         for name, df in [(w_a.value, da)] + ([(w_b.value, db)] if db is not None else []):
             objects += [Markdown(f"**{name}**"),

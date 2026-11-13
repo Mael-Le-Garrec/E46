@@ -3,6 +3,9 @@
 This is the git repository related to my 2000 BMW E46 323i.
 I'm using this repository to keep track of coding and ECU data.
 
+Browse the maps and logs: https://blog.hatrix.fr/E46/ (static page in
+`docs/`, data rebuilt with `python -m tools.build_site`).
+
 # Table of Content
 
 1. [Introduction](#introduction)
