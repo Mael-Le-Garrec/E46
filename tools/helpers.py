@@ -3,6 +3,7 @@ from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 from xml.etree import ElementTree as ET
+import re
 import struct
 
 import numpy as np
@@ -274,7 +275,8 @@ def extract_map(
 def list_bins(repo="."):
     """32KB calibration bins in the repo, keyed by short name ('stock', 'E85_V0.9', ...)."""
     bins = {}
-    for path in sorted(Path(repo).glob("**/*.bin")):
+    natural = lambda p: [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", str(p))]  # V0.9 < V0.10
+    for path in sorted(Path(repo).glob("**/*.bin"), key=natural):
         if ".git" in path.parts or path.stat().st_size != 32768:
             continue
         name = path.stem.replace("MS42_0110C6_32KB_", "").replace("hatrix_", "") or "stock"

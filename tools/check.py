@@ -11,6 +11,7 @@ pio.renderers.default = "json"  # no browser
 D = "tools/MS42_ECU_Definitions_v0.44.xml"
 bins, logs = list_bins(), list_logs()
 assert list(bins)[0] == "stock" and "E85_V0.9" in bins, bins
+assert list(bins).index("E85_V0.10") == list(bins).index("E85_V0.9") + 1  # natural sort
 
 # changed tables match the byte diffs done by hand
 assert changed_tables(D, bins["E85_V0.8"], bins["E85_V0.9"]) == ["Afterstart Enrichment"]

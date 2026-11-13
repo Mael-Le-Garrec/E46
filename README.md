@@ -180,6 +180,22 @@ Based on V0.8. Targets the occasional double crank around 10°C on E85.
     10°C: 1.55, 25°C: 1.45, 40°C: 1.35, 60°C and above: 1.3
 
 
+#### MS42_0110C6_32KB_hatrix_E85_V0.10.bin
+
+Based on V0.9. Centres the map on the E85 actually used (~E75 at French
+pumps) instead of slightly lean of it.
+
+* Warm fuel maps x1.04, i.e. x1.352 vs stock (was x1.3): Fuel Injection Base,
+  Part Load Bank 1 and 2, Idle Speed Warm and Cold, Alpha/n.
+  * 2022 logs, compared with the stock map on E10: the E85 needed +4-5% more
+    fuel everywhere, absorbed by the LTFT. Same fuel at the injectors once
+    learned, but the trim now sits near 0% on E85.
+  * Better where the trim is reduced or not learned yet (cold start, warm-up),
+    and the +10% LTFT limit is left for real faults. Summer E85 needs ~+7%,
+    E5 ~-26% (limit -35%).
+* Cranking, after-start and priming unchanged (tuned on E85 already).
+
+
 #### Improvements
 
 * Fuel Injection Warmup Enrichment: only if V0.9 doesn't fix the 10°C stall.
